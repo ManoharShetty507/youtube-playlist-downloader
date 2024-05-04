@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pytube import YouTube, Playlist
 from pathlib import Path
+import requests
 
 app = Flask(__name__)
 
@@ -12,50 +13,52 @@ def index():
 def download():
     url = request.form['url']
     download_type = request.form['downloadType']
-    download_location = request.form['downloadLocation']  # Retrieve the download folder path from the form
 
     try:
         if download_type == 'single':
-            download_single_video(url, download_location)  # Pass the download location to the function
+            filename, download_link = get_video_download_link(url)
+            return render_template('index.html', filename=filename, download_link=download_link)
         elif download_type == 'playlist':
-            download_playlist_videos(url, download_location)  # Pass the download location to the function
+            playlist_title, playlist_download_links = get_playlist_download_links(url)
+            return render_template('playlist.html', playlist_title=playlist_title, download_links=playlist_download_links)
         return redirect(url_for('index'))
     except Exception as e:
         return render_template('index.html', error=str(e))
 
-def download_single_video(video_url, download_location):
+def get_video_download_link(video_url):
     try:
         video = YouTube(video_url)
-        # Check if 720p stream is available, if not, try 480p
-        stream_720p = video.streams.filter(res='720p', file_extension='mp4').first()
-        stream_480p = video.streams.filter(res='480p', file_extension='mp4').first()
-
-        if stream_720p:
-            stream = stream_720p
-            resolution = '720p'
-        elif stream_480p:
-            stream = stream_480p
-            resolution = '480p'
-        else:
-            print(f"No suitable streams available for video: {video.title}")
-            return
-
-        output_file_path = Path(download_location) / f'{video.title}_{resolution}.mp4'  # Use the provided download location
-        if not output_file_path.is_file():
-            stream.download(download_location)
-            print(f"Downloaded video ({resolution}): {video.title}")
-        else:
-            print(f"Video '{video.title}' ({resolution}) already exists in the download folder, skipping download.")
+        stream = video.streams.get_highest_resolution()
+        download_link = stream.url
+        filename = f'{video.title}.mp4'
+        return filename, download_link
     except Exception as e:
-        print(f"Error downloading video: {e}")
+        print(f"Error getting video download link: {e}")
+        return None, None
 
-def download_playlist_videos(playlist_url, download_location):
+def get_playlist_download_links(playlist_url):
     try:
         playlist = Playlist(playlist_url)
-        for video_url in playlist.video_urls:
-            download_single_video(video_url, download_location)  # Download each video in the playlist
+        playlist_title = playlist.title
+        playlist_download_links = []
+
+        for video in playlist.videos:
+            filename, download_link = get_video_download_link(video.watch_url)
+            playlist_download_links.append((filename, download_link))
+
+        return playlist_title, playlist_download_links
     except Exception as e:
-        print(f"Error downloading playlist videos: {e}")
+        print(f"Error getting playlist download links: {e}")
+        return None, None
+
+@app.route('/download_video', methods=['GET'])
+def download_video():
+    download_link = request.args.get('download_link')
+    response = requests.get(download_link)
+    if response.status_code == 200:
+        return response.content, 200, {'Content-Type': 'application/octet-stream', 'Content-Disposition': 'attachment; filename=video.mp4'}
+    else:
+        return "Error downloading video", 500
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
