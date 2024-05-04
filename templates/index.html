@@ -1,33 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>YouTube Downloader</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
     <div class="container">
-        <h1>YouTube Downloader</h1>
-        <form action="/download" method="post">
-            <label for="url">Enter YouTube URL:</label>
-            <input type="text" id="url" name="url" required>
-            
-            <label for="downloadType">Choose download type:</label>
-            <select id="downloadType" name="downloadType">
-                <option value="single">Single Video</option>
-                <option value="playlist">Playlist</option>
-            </select>
+      <h1>YouTube Video Downloader</h1>
+      <form action="/download" method="post">
+        <label for="url">Enter YouTube URL:</label>
+        <input type="text" id="url" name="url" required />
 
-            <!-- Input field for the download folder path -->
-            <label for="downloadLocation">Enter Download Folder Path:</label>
-            <input type="text" id="downloadLocation" name="downloadLocation" placeholder="Enter or paste the download folder path">
+        <label for="downloadType">Choose download type:</label>
+        <select id="downloadType" name="downloadType">
+          <option value="single">Single Video</option>
+          <option value="playlist">Playlist</option>
+        </select>
 
-            <button type="submit">Download</button>
-        </form>
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+        <button type="submit" class="click-button">Click Here</button>
+      </form>
+      {% if filename and download_link %}
+      <p>Downloaded video: <a href="{{ download_link }}">{{ filename }}</a></p>
+      <form action="/download_video" method="get">
+        <input type="hidden" name="download_link" value="{{ download_link }}" />
+        <button type="submit" class="downloads">Download Video</button>
+      </form>
+      {% endif %} {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
     </div>
-</body>
+  </body>
 </html>
