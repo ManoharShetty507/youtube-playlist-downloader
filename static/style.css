@@ -59,7 +59,7 @@ select {
 }
 
 .download-button {
-  background-color: #11101096; /* Blue color */
+  background-color: #0db80dd4; /* Blue color */
   color: #fff;
   padding: 4px 8px;
   border: none;
@@ -68,7 +68,7 @@ select {
 }
 
 .download-button:hover {
-  background-color: #16d749; /* Darker blue color on hover */
+  background-color: #6143d6; /* Darker blue color on hover */
 }
 
 .downloads {
