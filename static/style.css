@@ -29,7 +29,7 @@ label {
 }
 
 input {
-  width: calc(103% - 20px); /* Adjusted width to fit inside the border */
+  width: calc(100% - 20px); /* Adjusted width to fit inside the border */
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
@@ -45,8 +45,8 @@ select {
   border-radius: 5px;
 }
 
-button {
-  background-color: #4caf50;
+.click-button {
+  background-color: #3fbf43; /* Green color */
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -54,8 +54,34 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #45a049;
+.click-button:hover {
+  background-color: #45a049; /* Darker green color on hover */
+}
+
+.download-button {
+  background-color: #11101096; /* Blue color */
+  color: #fff;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.download-button:hover {
+  background-color: #16d749; /* Darker blue color on hover */
+}
+
+.downloads {
+  background-color: #ff0000; /* Blue color */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.downloads:hover {
+  background-color: #0a0a0a; /* Darker blue color on hover */
 }
 
 .error {
